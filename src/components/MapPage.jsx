@@ -185,19 +185,7 @@ const MapPage = () => {
                 return 'Details';
               })()}
             </CardTitle>
-            <CardDescription className="line-clamp-1">
-              {(() => {
-                if (selectedPinmark) {
-                  const reg = selectedPinmark.fullData?.registrants;
-                  return reg ? `Ref: ${reg.reference_no}` : 'No registrant data linked';
-                }
-                if (selectedBoundary) {
-                  const reg = selectedBoundary.farm_parcels?.registrants;
-                  return reg ? `Owner: ${reg.first_name} ${reg.surname}` : 'No owner assigned';
-                }
-                return 'Select an item to view details';
-              })()}
-            </CardDescription>
+           
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto p-4 custom-scrollbar">
 
@@ -243,6 +231,10 @@ const MapPage = () => {
                         <div className="grid grid-cols-2 gap-1">
                           <span className="text-muted-foreground text-xs">Place of Birth:</span>
                           <span>{selectedPinmark.fullData.registrants.place_of_birth || 'N/A'}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1">
+                          <span className="text-muted-foreground text-xs">Religion:</span>
+                          <span>{selectedPinmark.fullData.registrants.religion || 'N/A'}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-1">
                           <span className="text-muted-foreground text-xs">Mother's Name:</span>
@@ -306,11 +298,55 @@ const MapPage = () => {
                         <i className="fas fa-id-card"></i> IDs & Benefits
                       </h4>
                       <div className="space-y-2 text-sm">
-                        <div className="flex gap-2 flex-wrap">
+                        <div className="grid grid-cols-2 gap-1">
+                          <span className="text-muted-foreground text-xs">Gov't ID Type:</span>
+                          <span>{selectedPinmark.fullData.registrants.government_id_type || 'N/A'}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1">
+                          <span className="text-muted-foreground text-xs">ID Number:</span>
+                          <span className="font-mono text-xs">{selectedPinmark.fullData.registrants.government_id_number || 'N/A'}</span>
+                        </div>
+                        <div className="flex gap-2 flex-wrap mt-2">
                           {selectedPinmark.fullData.registrants.is_pwd && <Badge variant="secondary">PWD</Badge>}
                           {selectedPinmark.fullData.registrants.is_4ps && <Badge variant="secondary">4Ps</Badge>}
                           {selectedPinmark.fullData.registrants.is_indigenous && <Badge variant="secondary">IP</Badge>}
+                          {selectedPinmark.fullData.registrants.is_member_of_assoc && <Badge variant="secondary">Assoc Member</Badge>}
                         </div>
+                      </div>
+                    </div>
+
+                    {/* 5. Financial Information */}
+                    <div>
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-primary mb-3 flex items-center gap-2 border-b border-border pb-1">
+                        <i className="fas fa-money-bill-wave"></i> Financial Info
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        {selectedPinmark.fullData.registrants.financial_infos?.[0] ? (
+                          <>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-muted-foreground text-xs">TIN:</span>
+                              <span className="font-mono text-xs">{selectedPinmark.fullData.registrants.financial_infos[0].tin_number || 'N/A'}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-muted-foreground text-xs">Source of Funds:</span>
+                              <span>{selectedPinmark.fullData.registrants.financial_infos[0].source_of_funds || 'N/A'}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-muted-foreground text-xs">Highest Education:</span>
+                              <span>{selectedPinmark.fullData.registrants.financial_infos[0].highest_formal_education || 'N/A'}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-muted-foreground text-xs">Farming Income:</span>
+                              <span>{selectedPinmark.fullData.registrants.financial_infos[0].income_from_farming || 'N/A'}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-muted-foreground text-xs">Non-Farming Income:</span>
+                              <span>{selectedPinmark.fullData.registrants.financial_infos[0].income_from_non_farming || 'N/A'}</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-xs text-muted-foreground italic">No financial information recorded</div>
+                        )}
                       </div>
                     </div>
 
@@ -417,56 +453,120 @@ const MapPage = () => {
                           </div>
                         </div>
 
-                        {/* Simplified Parcel Infos Display (Kept as improved visual) */}
-                        {selectedBoundary.farm_parcels.parcel_infos?.length > 0 ? (
-                          <div className="pt-2">
-                            <h5 className="text-xs font-bold text-muted-foreground uppercase mb-2">Production / Activities</h5>
-                            <div className="space-y-2 bg-background rounded border border-border p-3 shadow-sm">
-                              {selectedBoundary.farm_parcels.parcel_infos.map((info, pIdx) => (
-                                <div key={pIdx} className="flex items-center justify-between text-xs border-b border-border pb-2 last:border-0 last:pb-0 mb-2 last:mb-0">
+                        {/* Production/Activities Display */}
+                        {(() => {
+                          // Check if there's any actual production data
+                          const hasData = selectedBoundary.farm_parcels.parcel_infos?.some(pi => 
+                            (pi.crops && pi.crops.length > 0) || 
+                            (pi.livestock && pi.livestock.length > 0) || 
+                            (pi.poultry && pi.poultry.length > 0)
+                          );
 
-                                  {/* Left: Name and Type */}
-                                  <div className="flex items-center gap-3">
-                                    {/* Icon based on commodity */}
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${(info.crop_commodity === 'Crops' || info.commodity === 'Crops') ? 'bg-green-100 text-green-600' :
-                                        (info.crop_commodity === 'Livestock' || info.commodity === 'Livestock') ? 'bg-orange-100 text-orange-600' :
-                                          'bg-blue-100 text-blue-600'
-                                      }`}>
-                                      <i className={`fas ${(info.crop_commodity === 'Crops' || info.commodity === 'Crops') ? 'fa-seedling' :
-                                          (info.crop_commodity === 'Livestock' || info.commodity === 'Livestock') ? 'fa-piggy-bank' :
-                                            'fa-egg'
-                                        }`}></i>
-                                    </div>
-                                    <div>
-                                      <div className="font-semibold text-foreground">
-                                        {info.crop_name || info.animal_name || 'Unknown'}
-                                      </div>
-                                      <div className="text-[10px] text-muted-foreground">
-                                        {info.crop_commodity || info.commodity || info.commodity_type}
-                                        {info.corn_type && ` (${info.corn_type})`}
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Right: Quantity */}
-                                  <div className="text-right">
-                                    {(info.size_ha || info.size) && (
-                                      <div className="font-bold">{info.size_ha || info.size} ha</div>
-                                    )}
-                                    {(info.head_count || info.heads) && (
-                                      <div className="font-bold">{info.head_count || info.heads} heads</div>
-                                    )}
-                                    {info.organic === 'Yes' && (
-                                      <Badge variant="outline" className="text-[9px] h-4 px-1 py-0 text-green-600 border-green-200">Organic</Badge>
-                                    )}
+                          if (!hasData) {
+                            return (
+                              <div className="pt-2">
+                                <h5 className="text-xs font-bold text-muted-foreground uppercase mb-2">Production / Activities</h5>
+                                <div className="bg-background rounded border border-border p-3 shadow-sm">
+                                  <div className="text-xs italic text-muted-foreground text-center py-2">
+                                    No production data recorded for this farm
                                   </div>
                                 </div>
-                              ))}
+                              </div>
+                            );
+                          }
+
+                          return selectedBoundary.farm_parcels.parcel_infos?.length > 0 ? (
+                            <div className="pt-2">
+                              <h5 className="text-xs font-bold text-muted-foreground uppercase mb-2">Production / Activities</h5>
+                              <div className="space-y-2 bg-background rounded border border-border p-3 shadow-sm">
+                                {selectedBoundary.farm_parcels.parcel_infos.map((parcelInfo, pIdx) => (
+                                  <div key={pIdx} className="space-y-2">
+                                    {/* Render Crops */}
+                                    {parcelInfo.crops?.map((crop, cIdx) => (
+                                      <div key={`crop-${cIdx}`} className="flex items-center justify-between text-xs border-b border-border pb-2 last:border-0 last:pb-0 mb-2 last:mb-0">
+                                        <div className="flex items-center gap-3">
+                                          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-green-100 text-green-600">
+                                            <i className="fas fa-seedling"></i>
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold text-foreground">
+                                              {crop.name || 'Unknown Crop'}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground">
+                                              Crops
+                                              {crop.corn_type && ` (${crop.corn_type})`}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="text-right">
+                                          {crop.value_text && (
+                                            <div className="font-bold">{crop.value_text} </div>
+                                          )}
+                                          {parcelInfo.is_organic_practitioner && (
+                                            <span className="text-[9px] px-1 py-0 text-green-600 border-green-200">Organic</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                    
+                                    {/* Render Livestock */}
+                                    {parcelInfo.livestock?.map((animal, lIdx) => (
+                                      <div key={`livestock-${lIdx}`} className="flex items-center justify-between text-xs border-b border-border pb-2 last:border-0 last:pb-0 mb-2 last:mb-0">
+                                        <div className="flex items-center gap-3">
+                                          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-orange-100 text-orange-600">
+                                            <i className="fas fa-horse"></i>
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold text-foreground">
+                                              {animal.animal || 'Unknown Animal'}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground">Livestock</div>
+                                          </div>
+                                        </div>
+                                        <div className="text-right">
+                                          {animal.head_count && (
+                                            <div className="font-bold">{animal.head_count} heads</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                    
+                                    {/* Render Poultry */}
+                                    {parcelInfo.poultry?.map((bird, bIdx) => (
+                                      <div key={`poultry-${bIdx}`} className="flex items-center justify-between text-xs border-b border-border pb-2 last:border-0 last:pb-0 mb-2 last:mb-0">
+                                        <div className="flex items-center gap-3">
+                                          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-blue-100 text-blue-600">
+                                            <i className="fas fa-egg"></i>
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold text-foreground">
+                                              {bird.bird || 'Unknown Bird'}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground">Poultry</div>
+                                          </div>
+                                        </div>
+                                        <div className="text-right">
+                                          {bird.head_count && (
+                                            <div className="font-bold">{bird.head_count} heads</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="text-xs italic text-muted-foreground text-center">No production data recorded</div>
-                        )}
+                          ) : (
+                            <div className="pt-2">
+                              <h5 className="text-xs font-bold text-muted-foreground uppercase mb-2">Production / Activities</h5>
+                              <div className="bg-background rounded border border-border p-3 shadow-sm">
+                                <div className="text-xs italic text-muted-foreground text-center py-2">
+                                  No parcel information available
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     ) : (
                       <Badge variant="secondary">Unassigned Boundary</Badge>

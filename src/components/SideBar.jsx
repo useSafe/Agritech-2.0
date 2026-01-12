@@ -66,8 +66,8 @@ const Sidebar = ({ currentPage, setCurrentPage, handleLogout, isOpen, onClose, o
         roles: ['admin', 'moderator', 'user', 'agritech'],
         children: [
           { name: 'View Map', icon: 'fas fa-map', page: 'map', roles: ['admin', 'moderator', 'user', 'agritech'] },
-          { name: 'Set Pinmarks', icon: 'fas fa-map-pin', page: 'set-pinmark-info', roles: ['admin', 'agritech'] },
-          { name: 'Set Farm Parcels', icon: 'fas fa-draw-polygon', page: 'set-farm-parcel-info', roles: ['admin', 'agritech'] }
+          { name: 'Set Pinmarks', icon: 'fas fa-map-pin', page: 'set-pinmark-info', roles: ['agritech'] },
+          { name: 'Set Farm Parcels', icon: 'fas fa-draw-polygon', page: 'set-farm-parcel-info', roles: ['agritech'] }
         ]
       },
       { name: 'Import/Export', icon: 'fas fa-file-export', page: 'import', roles: ['admin', 'moderator'] },

@@ -97,7 +97,11 @@ export default function PinMarkMap({
           if (pinmark.registrant_id) {
             const { data: registrant, error: regError } = await supabase
               .from('registrants')
-              .select(`*, addresses (*)`)
+              .select(`
+                *,
+                addresses (*),
+                financial_infos (*)
+              `)
               .eq('id', pinmark.registrant_id)
               .single();
 

@@ -98,7 +98,15 @@ export default function FarmBoundaryMap({
                     if (boundary.farm_parcel_id) {
                         const { data: parcel, error: parcelError } = await supabase
                             .from('farm_parcels')
-                            .select(`*, parcel_infos (*)`)
+                            .select(`
+                                *,
+                                parcel_infos (
+                                    *,
+                                    crops:crops!parcel_info_id (*),
+                                    livestock:livestock!parcel_info_id (*),
+                                    poultry:poultry!parcel_info_id (*)
+                                )
+                            `)
                             .eq('id', boundary.farm_parcel_id)
                             .single();
 
