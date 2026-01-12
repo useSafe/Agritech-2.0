@@ -96,7 +96,7 @@ const AppRoutes = ({ user, setUser }) => {
       <Route
         path="/set-pinmark-info"
         element={
-          <ProtectedRoute allowedRoles={["admin", "agritech"]}>
+          <ProtectedRoute allowedRoles={["agritech"]}>
             <SetPinmarkInfoPage user={user} />
           </ProtectedRoute>
         }
@@ -106,7 +106,7 @@ const AppRoutes = ({ user, setUser }) => {
       <Route
         path="/set-farm-parcel-info"
         element={
-          <ProtectedRoute allowedRoles={["admin", "agritech"]}>
+          <ProtectedRoute allowedRoles={["agritech"]}>
             <SetFarmParcelInfoPage user={user} />
           </ProtectedRoute>
         }
