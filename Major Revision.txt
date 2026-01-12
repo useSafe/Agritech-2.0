@@ -1,0 +1,48 @@
+- QGIS for Pinmark(Location) and Polygon(Farm)
+- GeoServer if still needed for Connecting the QGIS to our online Web App(if not then dont add this)
+- PostGIS if it needs to connect QGIS and Supabase, also adding Spatial Queries(same as GeoServer if not then dont add this)
+- Making the whole website Progressive Web App where it has offline feature then if online sync to supabase. Using IndexDB(as Local Storage including analytics if it already full it will alert user to online): Profile Page
+- Remove Total Hectare Calculation from auto calculation of crops hectare in farm parcel info form rather should based on Polygonized Area
+- Add Page where those set Pinmarks or Polygon can attach the information such as Personal Info(for Pinmark Location) and Farm Parcel Info(for Farm Polygon)
+- Fix GIS Map View Modal and Display Data where it should display for Pinmark is Personal Info, then Polygon is Farm Parcel
+- Fix RSBSA Records View Modal about it display all Parcel Info even from other parcels in 1 parcel, like Farm Parcel 2 and 3 Parcel Infos keeps displaying in Parcel 1
+- Add Quick Action Buttons on TopNavigation based on the Flow like Register Page -> RSBSA Records -> Set Pinmark Info/Set Farm Parcel Info -> GIS
+
+Main Goals:
+- Land Ownership 
+- Boundaries
+- Accurate Farm Size
+- 3D View of Farm Polygons in GIS Page: Farm Map if clicked or focused
+- Seeds(Farmer Analytics for those who are more needs to be beneficial in events based on their data)
+
+Add Ons(Optional, Prio the GIS):
+- Totally Responsive
+- Fully Switch Theme
+- Scheduling Calendar for Events
+- Chatbot for Profile Page for asking Help and Assistance
+
+
+
+Pages to Add:
+
+- Agritech Role only: Add Set Pinmark Info Page - Map that Reflect all Pinmarks annotated from QGIS where each pinmark can attach a Personal Info for Registered Farmer or Fisherfolk(Infos can attach are those Form from Register Page)
+- Agritech Role only: Add Set Farm Parcel Info Page - Map that Reflect all Polygons annotated from QGIS where each polygon can attach a Farm Parcel and Parcel Info for Registered Farmer(Infos can attach are those from Farm Data form from Register Page)
+- Seeds Page: List of Analyzed Farmers who will be beneficial in terms of seeds in events based on their data
+
+Pages with Modification:
+- Remove Total Hectare Calculation from auto calculation of crops hectare in farm parcel info form rather should based on Polygonized Area from Annotated Polygon from QGIS like calculate the area of the polygon
+- GIS Map: Change name for Purok Map into Location Map and will display all Pinmarks from Set Pinmark Info Page then Farm Map will display all Polygons from Set Farm Parcel Info Page
+- ...
+
+
+Prio on Implementation:
+- Attachment of QGIS and PostGIS in my System
+- Fixing and Adding Pages such as RSBSA Records, GIS Map, Seeds Page, Dashboard
+- Progressive Web App
+- Add Ons
+
+Problem:
+- This App is Deployed online thru Supabase and Vercel which can be accessible anywhere by our users since their computers are too slow where even using Excel can cause to Blue Screen of Death. now how can we make it still accessible to our users but offline feature where it will sync to online when it is online. especially it has local app integration which is QGIS and PostGIS. 
+
+
+I already have setup QGIS and PostGIS in my PC. just provide the instructions how to set up all of these implementation
