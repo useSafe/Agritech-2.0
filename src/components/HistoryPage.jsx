@@ -353,7 +353,7 @@ const handlePermanentDelete = async () => {
             ? 'bg-teal-600 hover:bg-teal-700 text-foreground font-semibold border-b-2 border-teal-400 rounded-b-none' 
             : 'text-muted-foreground hover:text-foreground hover:bg-muted/80 border-b-2 border-transparent rounded-b-none'}
         >
-          <i className="fas fa-trash-restore mr-2"></i> Deleted Records
+          <i className="fas fa-trash-restore mr-2"></i> Archived Records
           <Badge className={activeTab === 'deleted' ? 'ml-2 bg-teal-800 text-teal-200' : 'ml-2 bg-red-900/50 text-red-300'}>{deletedRecords.length}</Badge>
         </Button>
         <Button
@@ -982,3 +982,4 @@ const handlePermanentDelete = async () => {
 };
 
 export default HistoryPage;
+
