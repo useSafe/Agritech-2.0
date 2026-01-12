@@ -9,6 +9,7 @@ import { Toast, ToastViewport } from "@/components/ui/toast";
 import ClientOnly from './ClientOnly';
 import { supabase } from '../services/api';
 import { ThemeContext } from '../App';
+import QGISDocModal from './QGISDocModal';
 import 'leaflet/dist/leaflet.css';
 
 // Fix Leaflet default marker icon
@@ -74,6 +75,7 @@ const SetPinmarkInfoPage = () => {
     const [selectedRegistrant, setSelectedRegistrant] = useState(null);
     const [mapCenter, setMapCenter] = useState([8.5, 124.8]); // Mindanao default
     const [mapZoom, setMapZoom] = useState(10);
+    const [showDocModal, setShowDocModal] = useState(false);
 
     // Toast State
     const [toast, setToast] = useState({ show: false, variant: 'neutral', title: '', description: '' });
@@ -354,10 +356,22 @@ const SetPinmarkInfoPage = () => {
                                 Set Pinmark Info
                             </CardTitle>
                         </div>
-                        <Button onClick={fetchPinmarks} variant="outline" size="sm" className="h-8">
-                            <i className="fas fa-sync mr-2"></i>
-                            Refresh
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button 
+                                onClick={() => setShowDocModal(true)} 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8"
+                                title="View QGIS Import Guide"
+                            >
+                                <i className="fas fa-info-circle mr-2"></i>
+                                Guide
+                            </Button>
+                            <Button onClick={fetchPinmarks} variant="outline" size="sm" className="h-8">
+                                <i className="fas fa-sync mr-2"></i>
+                                Refresh
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent className="p-0 relative h-[600px]">
                         <ClientOnly>
@@ -646,6 +660,13 @@ const SetPinmarkInfoPage = () => {
                     </Card>
                 </div>
             )}
+
+            {/* QGIS Documentation Modal */}
+            <QGISDocModal 
+                isOpen={showDocModal} 
+                onClose={() => setShowDocModal(false)} 
+                type="pinmark" 
+            />
 
             {toast.show && (
                 <ToastViewport position="top-center">

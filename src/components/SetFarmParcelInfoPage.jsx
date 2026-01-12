@@ -10,6 +10,7 @@ import ClientOnly from './ClientOnly';
 import { supabase } from '../services/api';
 import ApiService from '../services/api';
 import { ThemeContext } from '../App';
+import QGISDocModal from './QGISDocModal';
 import 'leaflet/dist/leaflet.css';
 
 // Component to fix map rendering
@@ -48,6 +49,7 @@ const SetFarmParcelInfoPage = () => {
     const [uploadingImage, setUploadingImage] = useState(false);
     const [mapCenter, setMapCenter] = useState([8.5, 124.8]); // Mindanao default
     const [mapZoom, setMapZoom] = useState(10);
+    const [showDocModal, setShowDocModal] = useState(false);
 
     // Toast State
     const [toast, setToast] = useState({ show: false, variant: 'neutral', title: '', description: '' });
@@ -484,10 +486,22 @@ const SetFarmParcelInfoPage = () => {
                                 Set Farm Parcel Info
                             </CardTitle>
                         </div>
-                        <Button onClick={() => { fetchFarmBoundaries(); fetchFarmParcels(); }} variant="outline" size="sm" className="h-8">
-                            <i className="fas fa-sync mr-2"></i>
-                            Refresh
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button 
+                                onClick={() => setShowDocModal(true)} 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8"
+                                title="View QGIS Import Guide"
+                            >
+                                <i className="fas fa-info-circle mr-2"></i>
+                                Guide
+                            </Button>
+                            <Button onClick={() => { fetchFarmBoundaries(); fetchFarmParcels(); }} variant="outline" size="sm" className="h-8">
+                                <i className="fas fa-sync mr-2"></i>
+                                Refresh
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent className="p-0 relative h-[600px]">
                         <ClientOnly>
@@ -896,6 +910,13 @@ const SetFarmParcelInfoPage = () => {
                     </div>
                 )
             }
+
+            {/* QGIS Documentation Modal */}
+            <QGISDocModal 
+                isOpen={showDocModal} 
+                onClose={() => setShowDocModal(false)} 
+                type="polygon" 
+            />
 
             {toast.show && (
                 <ToastViewport position="top-center">
