@@ -350,6 +350,29 @@ const MapPage = () => {
                       </div>
                     </div>
 
+                    {/* 6. Fishing Data (Only for Fisherfolk) */}
+                    {selectedPinmark.fullData.registrants.registry === 'fisherfolk' && (
+                      <div>
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-primary mb-3 flex items-center gap-2 border-b border-border pb-1">
+                          <i className="fas fa-fish"></i> Fishing Data
+                        </h4>
+                        <div className="space-y-2">
+                          <span className="text-muted-foreground text-xs block mb-2">Type of Fishing Activities</span>
+                          {selectedPinmark.fullData.registrants.fishing_activities?.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {selectedPinmark.fullData.registrants.fishing_activities.map((activity, idx) => (
+                                <span key={idx} className="inline-block px-3 py-1 bg-blue-600/20 text-blue-400 rounded-md text-sm font-medium border border-blue-600/30">
+                                  {activity.activity || 'N/A'}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-xs text-muted-foreground italic">No fishing activity data recorded</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                   </>
                 ) : (
                   <div className="text-center py-6 text-muted-foreground">

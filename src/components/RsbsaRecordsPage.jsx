@@ -637,7 +637,7 @@ const RsbsaRecordsPage = () => {
               onClick={() => setShowDeleteMode(true)}
               className="bg-red-600 hover:bg-red-700 text-white !rounded-button"
             >
-              <i className="fas fa-trash mr-2"></i> Delete Records
+              <i className="fas fa-trash mr-2"></i> Archive Records
             </Button>
           ) : (
             <>
@@ -758,7 +758,7 @@ const RsbsaRecordsPage = () => {
                   <TableHead className={subTextClass}>Type</TableHead>
                   <TableHead className={subTextClass}>Phone</TableHead>
                   <TableHead className={subTextClass}>Registered On</TableHead>
-                  <TableHead className={subTextClass}>Set Location</TableHead>
+                
                   <TableHead className={subTextClass}>Set Pinmark</TableHead>
                   <TableHead className={subTextClass}>Set Farm</TableHead>
                   <TableHead className={subTextClass}>Status</TableHead>
@@ -813,25 +813,27 @@ const RsbsaRecordsPage = () => {
                       <TableCell className={`${subTextClass} text-sm`}>
                         {record.registeredOn}
                       </TableCell>
+                      
                       <TableCell>
-                        {record.fullData?.farm_parcels?.some(p => p.latitude && p.longitude) ? (
-                          <Badge className="bg-green-500/10 text-green-600 border-0">Yes</Badge>
+                        {record.type === 'Farmer' ? (
+                          record.hasPinmark ? (
+                            <Badge className="bg-green-500/10 text-green-600 border-0">Yes</Badge>
+                          ) : (
+                            <Badge className="bg-gray-500/10 text-gray-600 border-0">No</Badge>
+                          )
                         ) : (
-                          <Badge className="bg-gray-500/10 text-gray-600 border-0">No</Badge>
+                          <span className={`text-sm ${subTextClass}`}> </span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {record.hasPinmark ? (
-                          <Badge className="bg-green-500/10 text-green-600 border-0">Yes</Badge>
+                        {record.type === 'Farmer' ? (
+                          record.hasFarmBoundary ? (
+                            <Badge className="bg-green-500/10 text-green-600 border-0">Yes</Badge>
+                          ) : (
+                            <Badge className="bg-gray-500/10 text-gray-600 border-0">No</Badge>
+                          )
                         ) : (
-                          <Badge className="bg-gray-500/10 text-gray-600 border-0">No</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {record.hasFarmBoundary ? (
-                          <Badge className="bg-green-500/10 text-green-600 border-0">Yes</Badge>
-                        ) : (
-                          <Badge className="bg-gray-500/10 text-gray-600 border-0">No</Badge>
+                          <span className={`text-sm ${subTextClass}`}> </span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -840,16 +842,6 @@ const RsbsaRecordsPage = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {userRole === 'agritech' && record.type !== 'Fisherfolk' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(`/set-farm-location/${record.dbId}`)}
-                            className="text-orange-500 hover:text-orange-600 hover:bg-orange-500/10 mr-2"
-                          >
-                            <i className="fas fa-map-marker-alt mr-1"></i> Add Location
-                          </Button>
-                        )}
                         <Button
                           variant="ghost"
                           size="sm"

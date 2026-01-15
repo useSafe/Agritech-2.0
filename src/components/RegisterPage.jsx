@@ -449,6 +449,8 @@ const handleSubmit = async () => {
       spouse_name: civilStatus === 'Married' ? formInputs.spouse_name || null : null,
       mother_full_name: formInputs.mother_full_name || null,
       is_household_head: isHouseholdHead,
+      household_head_name: !isHouseholdHead ? formInputs.household_head_name || null : null,
+household_head_relationship: !isHouseholdHead ? formInputs.household_head_relationship || null : null,
       household_members_count: !isHouseholdHead ? parseInt(formInputs.household_members_count) || null : null,
       household_males: !isHouseholdHead ? parseInt(formInputs.household_males) || null : null,
       household_females: !isHouseholdHead ? parseInt(formInputs.household_females) || null : null,
@@ -878,7 +880,7 @@ const handleSubmit = async () => {
     { value: 'white', label: 'White' }
   ];
   const governmentIdOptions = ['PhilID / ePhilID', 'GSIS', 'SSS', 'PhilHealth', 'Voter\'s ID', 'Driver\'s License', 'PRC License', 'Passport', 'Senior Citizen ID', 'PWD ID', 'Postal ID', 'TIN ID', 'Barangay ID', 'Company ID', 'School ID'];
-  const sourceFundsOptions = ['Personal Savings', 'Family Support', 'Agricultural Income', 'Remittance', 'Loan', 'Government Assistance', 'Pension', 'Business Income'];
+  const sourceFundsOptions = ['Personal Savings', 'Family Support', 'Agricultural Income', 'Farming', 'Fishing', 'Remittance', 'Loan', 'Government Assistance', 'Pension', 'Business Income'];
   
   // Poultry animals
   const poultryOptions = ['Chicken', 'Duck', 'Turkey', 'Gamefowl'];
@@ -2231,12 +2233,19 @@ const renderFinancialTab = () => (
     className="w-full h-10 px-3 py-2 bg-card border border-gray-700/30 dark:border-gray-700/30 rounded-md text-foreground"
   >
     <option value="">Select</option>
-    <option value="salary">Salary</option>
-    <option value="business">Business</option>
-    <option value="remittance">Remittance</option>
-    <option value="pension">Pension</option>
-    <option value="investment">Investment</option>
-    <option value="other">Other</option>
+    <option value="Personal Savings">Personal Savings</option>
+    <option value="Family Support">Family Support</option>
+    <option value="Agricultural Income">Agricultural Income</option>
+    <option value="Farming">Farming</option>
+    <option value="Fishing">Fishing</option>
+    <option value="Remittance">Remittance</option>
+    <option value="Loan">Loan</option>
+    <option value="Government Assistance">Government Assistance</option>
+    <option value="Pension">Pension</option>
+    <option value="Business Income">Business Income</option>
+    <option value="Salary">Salary</option>
+    <option value="Investment">Investment</option>
+    <option value="Other">Other</option>
   </select>
 </div>
 
@@ -2657,11 +2666,22 @@ const renderPreviewTab = () => {
   <div className="border-t border-border/10 dark:border border-gray-700/30 dark:border-gray-700/30 dark:border border-gray-700/30 dark:border-gray-700/30/20 dark:border border-gray-700/30 dark:border-gray-700/30 pt-4">
     <h4 className="text-muted-foreground font-medium mb-2">Fishing Activities</h4>
     <div className="flex flex-wrap gap-2">
-      {fishingActivities.length > 0 ? (
-        fishingActivities.map((item, index) => (
-          item.activity && <Badge key={index} className="bg-blue-600/20 text-blue-400">{item.activity}</Badge>
-        ))
-      ) : (
+      {/* Display checked fishing activities from checkboxes */}
+      {fishingCheckboxes.fish_capture && <Badge className="bg-blue-600/20 text-blue-400">Fish capture</Badge>}
+      {fishingCheckboxes.aquaculture && <Badge className="bg-blue-600/20 text-blue-400">Aquaculture</Badge>}
+      {fishingCheckboxes.gleaning && <Badge className="bg-blue-600/20 text-blue-400">Gleaning</Badge>}
+      {fishingCheckboxes.fish_processing && <Badge className="bg-blue-600/20 text-blue-400">Fish processing</Badge>}
+      {fishingCheckboxes.fish_vending && <Badge className="bg-blue-600/20 text-blue-400">Fish vending</Badge>}
+      
+      {/* Display custom fishing activities */}
+      {fishingActivities.map((item, index) => (
+        item.activity && <Badge key={index} className="bg-blue-600/20 text-blue-400">{item.activity}</Badge>
+      ))}
+      
+      {/* Show message if no activities selected */}
+      {!fishingCheckboxes.fish_capture && !fishingCheckboxes.aquaculture && !fishingCheckboxes.gleaning && 
+       !fishingCheckboxes.fish_processing && !fishingCheckboxes.fish_vending && 
+       fishingActivities.filter(a => a.activity).length === 0 && (
         <span className="text-muted-foreground text-sm">No activities added</span>
       )}
     </div>

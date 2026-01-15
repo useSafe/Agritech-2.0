@@ -337,6 +337,31 @@ const ViewRecordModal = ({
                     </div>
                 </div>
 
+                {/* Fishing Data Section - Only for Fisherfolk */}
+                {record.type === "Fisherfolk" && (
+                    <div>
+                        <h4 className={`text-lg font-semibold ${textClass} mb-3 border-b ${tableBorderClass} pb-2`}>
+                            <i className="fas fa-fish mr-2"></i> Fishing Data
+                        </h4>
+                        <div className="space-y-3">
+                            <div>
+                                <label className={`text-sm ${subTextClass} block mb-2`}>Type of Fishing Activities</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {normalizedData.fishing_activities?.length > 0 ? (
+                                        normalizedData.fishing_activities.map((activity, idx) => (
+                                            <Badge key={idx} className="bg-blue-600/20 text-blue-400 border-blue-600/30">
+                                                {activity.activity}
+                                            </Badge>
+                                        ))
+                                    ) : (
+                                        <span className={`text-sm ${subTextClass} italic`}>No fishing activities recorded</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Farm Data Section - Only for Farmers */}
                 {record.type === "Farmer" && (
                     <div>

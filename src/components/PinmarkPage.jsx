@@ -100,7 +100,8 @@ export default function PinMarkMap({
               .select(`
                 *,
                 addresses (*),
-                financial_infos (*)
+                financial_infos (*),
+                fishing_activities (*)
               `)
               .eq('id', pinmark.registrant_id)
               .single();
