@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 
 // Modal wrapper component (same as EditableViewModal but stripped down)
 const Modal = React.memo(({ show, onClose, title, children, size = "md" }) => {

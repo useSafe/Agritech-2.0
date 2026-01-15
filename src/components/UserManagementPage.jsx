@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from '@/services/api';
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 
 const Modal = React.memo(({ show, onClose, title, children, theme }) => {
   if (!show) return null;

@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Toast, ToastViewport } from "@/components/ui/toast";
 import ClientOnly from './ClientOnly';
 import { supabase } from '../services/api';
-import { ThemeContext } from '../App';
+import { ThemeContext } from '../context/ThemeContext';
 import QGISDocModal from './QGISDocModal';
+import ConfirmModal from './ConfirmModal';
 import 'leaflet/dist/leaflet.css';
 
 // Fix Leaflet default marker icon
@@ -76,6 +77,8 @@ const SetPinmarkInfoPage = () => {
     const [mapCenter, setMapCenter] = useState([8.5, 124.8]); // Mindanao default
     const [mapZoom, setMapZoom] = useState(10);
     const [showDocModal, setShowDocModal] = useState(false);
+    const [showDetachModal, setShowDetachModal] = useState(false);
+    const [detachingPinmarkId, setDetachingPinmarkId] = useState(null);
 
     // Toast State
     const [toast, setToast] = useState({ show: false, variant: 'neutral', title: '', description: '' });
@@ -242,8 +245,13 @@ const SetPinmarkInfoPage = () => {
         }
     };
 
-    const handleDetachRegistrant = async (pinmarkId) => {
-        if (!confirm('Are you sure you want to detach this registrant from the pinmark?')) return;
+    const handleDetachClick = (pinmarkId) => {
+        setDetachingPinmarkId(pinmarkId);
+        setShowDetachModal(true);
+    };
+
+    const handleDetachConfirm = async () => {
+        if (!detachingPinmarkId) return;
 
         try {
             setSaving(true);
@@ -252,11 +260,17 @@ const SetPinmarkInfoPage = () => {
                 .update({
                     registrant_id: null
                 })
-                .eq('id', pinmarkId);
+                .eq('id', detachingPinmarkId);
 
             if (error) throw error;
 
             showToast('success', 'Success', 'Successfully detached registrant from pinmark');
+            
+            // Reset UI state
+            setSelectedPinmark(null);
+            setDetachingPinmarkId(null);
+            
+            // Refresh data
             fetchPinmarks();
         } catch (error) {
             console.error('Error detaching registrant:', error);
@@ -507,7 +521,7 @@ const SetPinmarkInfoPage = () => {
                                                 </Button>
                                                 <Button
                                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                                                    onClick={() => handleDetachRegistrant(selectedPinmark.id)}
+                                                    onClick={() => handleDetachClick(selectedPinmark.id)}
                                                 >
                                                     <span className="flex items-center gap-1">
                                                         ❌ Detach
@@ -531,19 +545,10 @@ const SetPinmarkInfoPage = () => {
                                             </div>
                                         </div>
                                     )}
-                                </div>
-
-                                {/* Delete Section */}
-                                <div className="pt-6 mt-6 border-t border-border">
-                                    <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 text-red-500">
-                                        Danger Zone
-                                    </h4>
-                                    <p className={`text-xs mb-3 ${subTextClass}`}>
-                                        Permanently delete this pinmark from the database.
-                                    </p>
+                                    
                                     <Button
                                         variant="outline"
-                                        className="w-full text-red-500 border-red-200 hover:bg-red-500/10 hover:text-red-700"
+                                        className="w-full text-red-500 border-red-200 hover:bg-red-500/10 hover:text-red-700 mt-2"
                                         onClick={() => handleDeletePinmark(selectedPinmark.id)}
                                     >
                                         <i className="fas fa-trash-alt mr-2"></i>
@@ -666,6 +671,20 @@ const SetPinmarkInfoPage = () => {
                 isOpen={showDocModal} 
                 onClose={() => setShowDocModal(false)} 
                 type="pinmark" 
+            />
+
+            {/* Detach Confirmation Modal */}
+            <ConfirmModal
+                isOpen={showDetachModal}
+                onClose={() => {
+                    setShowDetachModal(false);
+                    setDetachingPinmarkId(null);
+                }}
+                onConfirm={handleDetachConfirm}
+                title="Confirm Detach"
+                message="Are you sure you want to detach this registrant from the pinmark? This action will remove the assignment."
+                confirmText="Detach"
+                confirmVariant="destructive"
             />
 
             {toast.show && (

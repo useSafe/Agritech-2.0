@@ -9,8 +9,9 @@ import { Toast, ToastViewport } from "@/components/ui/toast";
 import ClientOnly from './ClientOnly';
 import { supabase } from '../services/api';
 import ApiService from '../services/api';
-import { ThemeContext } from '../App';
+import { ThemeContext } from '../context/ThemeContext';
 import QGISDocModal from './QGISDocModal';
+import ConfirmModal from './ConfirmModal';
 import 'leaflet/dist/leaflet.css';
 
 // Component to fix map rendering
@@ -50,6 +51,8 @@ const SetFarmParcelInfoPage = () => {
     const [mapCenter, setMapCenter] = useState([8.5, 124.8]); // Mindanao default
     const [mapZoom, setMapZoom] = useState(10);
     const [showDocModal, setShowDocModal] = useState(false);
+    const [showDetachModal, setShowDetachModal] = useState(false);
+    const [detachingBoundaryId, setDetachingBoundaryId] = useState(null);
 
     // Toast State
     const [toast, setToast] = useState({ show: false, variant: 'neutral', title: '', description: '' });
@@ -258,8 +261,13 @@ const SetFarmParcelInfoPage = () => {
         }
     };
 
-    const handleDetachParcel = async (boundaryId) => {
-        if (!confirm('Are you sure you want to detach this farm parcel from the boundary?')) return;
+    const handleDetachClick = (boundaryId) => {
+        setDetachingBoundaryId(boundaryId);
+        setShowDetachModal(true);
+    };
+
+    const handleDetachConfirm = async () => {
+        if (!detachingBoundaryId) return;
 
         try {
             setSaving(true);
@@ -268,7 +276,7 @@ const SetFarmParcelInfoPage = () => {
             const { data: boundary, error: fetchError } = await supabase
                 .from('farm_boundaries')
                 .select('farm_parcel_id')
-                .eq('id', boundaryId)
+                .eq('id', detachingBoundaryId)
                 .single();
 
             if (fetchError) throw fetchError;
@@ -279,7 +287,7 @@ const SetFarmParcelInfoPage = () => {
                 .update({
                     farm_parcel_id: null
                 })
-                .eq('id', boundaryId);
+                .eq('id', detachingBoundaryId);
 
             if (boundaryError) throw boundaryError;
 
@@ -297,6 +305,12 @@ const SetFarmParcelInfoPage = () => {
             }
 
             showToast('success', 'Success', 'Successfully detached farm parcel from boundary');
+            
+            // Reset UI state
+            setSelectedBoundary(null);
+            setDetachingBoundaryId(null);
+            
+            // Refresh data
             fetchFarmBoundaries();
             fetchFarmParcels();
         } catch (error) {
@@ -604,11 +618,6 @@ const SetFarmParcelInfoPage = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    {selectedBoundary.notes && (
-                                        <div className="mt-2 p-2 bg-muted/30 rounded text-xs text-muted-foreground">
-                                            {selectedBoundary.notes}
-                                        </div>
-                                    )}
                                 </div>
 
                                 {/* Farm Image Section */}
@@ -717,7 +726,7 @@ const SetFarmParcelInfoPage = () => {
                                                     </Button>
                                                     <Button
                                                         className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                                                        onClick={() => handleDetachParcel(selectedBoundary.id)}
+                                                        onClick={() => handleDetachClick(selectedBoundary.id)}
                                                     >
                                                         <span className="flex items-center gap-1">
                                                             ❌ Detach
@@ -742,19 +751,10 @@ const SetFarmParcelInfoPage = () => {
                                             </div>
                                         </div>
                                     )}
-                                </div>
-
-                                {/* Delete Section */}
-                                <div className="pt-6 mt-6 border-t border-border">
-                                    <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 text-red-500">
-                                        Danger Zone
-                                    </h4>
-                                    <p className={`text-xs mb-3 ${subTextClass}`}>
-                                        Permanently delete this boundary shape from the database.
-                                    </p>
+                                    
                                     <Button
                                         variant="outline"
-                                        className="w-full text-red-500 border-red-200 hover:bg-red-500/10 hover:text-red-700"
+                                        className="w-full text-red-500 border-red-200 hover:bg-red-500/10 hover:text-red-700 mt-2"
                                         onClick={() => handleDeleteBoundary(selectedBoundary.id)}
                                     >
                                         <i className="fas fa-trash-alt mr-2"></i>
@@ -916,6 +916,20 @@ const SetFarmParcelInfoPage = () => {
                 isOpen={showDocModal} 
                 onClose={() => setShowDocModal(false)} 
                 type="polygon" 
+            />
+
+            {/* Detach Confirmation Modal */}
+            <ConfirmModal
+                isOpen={showDetachModal}
+                onClose={() => {
+                    setShowDetachModal(false);
+                    setDetachingBoundaryId(null);
+                }}
+                onConfirm={handleDetachConfirm}
+                title="Confirm Detach"
+                message="Are you sure you want to detach this farm parcel from the boundary? This action will remove the assignment and clear the polygon data from the parcel."
+                confirmText="Detach"
+                confirmVariant="destructive"
             />
 
             {toast.show && (

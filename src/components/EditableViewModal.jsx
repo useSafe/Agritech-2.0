@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Minus } from "lucide-react";
 import ApiService, { supabase } from "../services/api";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 
 // Modal wrapper component
 const Modal = React.memo(({ show, onClose, title, children, size = "md" }) => {

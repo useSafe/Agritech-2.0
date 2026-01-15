@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ApiService, { supabase } from "../services/api";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 import EditableViewModal from "./EditableViewModal";
 import ViewRecordModal from "./ViewRecordModal"; // ✅ NEW: Read-Only View Modal
 

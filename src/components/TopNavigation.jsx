@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 
 const TopNavigation = ({
   toggleSidebar,

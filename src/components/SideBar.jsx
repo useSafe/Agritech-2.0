@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../context/ThemeContext";
 
 const Sidebar = ({ currentPage, setCurrentPage, handleLogout, isOpen, onClose, onCollapse, user }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -66,8 +66,8 @@ const Sidebar = ({ currentPage, setCurrentPage, handleLogout, isOpen, onClose, o
         roles: ['admin', 'moderator', 'user', 'agritech'],
         children: [
           { name: 'View Map', icon: 'fas fa-map', page: 'map', roles: ['admin', 'moderator', 'user', 'agritech'] },
-          { name: 'Set Pinmarks', icon: 'fas fa-map-pin', page: 'set-pinmark-info', roles: ['agritech'] },
-          { name: 'Set Farm Parcels', icon: 'fas fa-draw-polygon', page: 'set-farm-parcel-info', roles: ['agritech'] }
+          { name: 'Set Pin Info', icon: 'fas fa-map-pin', page: 'set-pinmark-info', roles: ['agritech'] },
+          { name: 'Set Parcel Info', icon: 'fas fa-draw-polygon', page: 'set-farm-parcel-info', roles: ['agritech'] }
         ]
       },
       { name: 'Import/Export', icon: 'fas fa-file-export', page: 'import', roles: ['admin', 'moderator'] },
