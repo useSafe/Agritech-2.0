@@ -18,7 +18,8 @@ import { Toast } from "@/components/ui/toast";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
-export const ThemeContext = createContext();
+import { ThemeContext } from "./context/ThemeContext";
+
 // Main App Content Component (inside Router)
 const AppContent = () => {
   const navigate = useNavigate();
