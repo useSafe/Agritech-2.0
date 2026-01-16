@@ -585,7 +585,7 @@ const SetFarmParcelInfoPage = () => {
                 </Card>
 
                 {/* Right Column: Info Panel */}
-                <Card className={`bg-card border-0 shadow-md h-[600px] flex flex-col`}>
+                <Card className={`bg-card border-0 shadow-md h-full flex flex-col`}>
                     <CardHeader className="border-b border-border pb-3">
                         <CardTitle className={`text-lg ${textClass}`}>
                             {selectedBoundary ? 'Boundary Details' : 'Select Boundary'}
