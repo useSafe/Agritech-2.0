@@ -135,6 +135,31 @@ const handlePermanentDelete = async () => {
   }
 };
 
+// ✅ Handle manual archive
+const handleManualArchive = async () => {
+  try {
+    setLoading(true);
+    const result = await ApiService.manualArchiveLogs();
+    
+    // Refresh data
+    await fetchData();
+    
+    // Show success modal
+    setModalTitle('Success');
+    setModalMessage(`Successfully archived ${result.archived_count} activity log${result.archived_count !== 1 ? 's' : ''}!`);
+    setShowSuccessModal(true);
+  } catch (err) {
+    console.error('Error manually archiving logs:', err);
+    
+    // Show error modal
+    setModalTitle('Error');
+    setModalMessage('Failed to archive logs. Please try again.');
+    setShowErrorModal(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Filter activity logs
   const filteredActivityLogs = activityLogs.filter(log =>
@@ -394,10 +419,15 @@ const handlePermanentDelete = async () => {
       {activeTab === 'activity' && (
         <Card className="bg-card border-0">
           <CardHeader>
-            <CardTitle className="text-foreground">Recent Activity</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              System-wide activity logs and user actions
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-foreground">Recent Activity</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  System-wide activity logs and user actions
+                </CardDescription>
+              </div>
+              
+            </div>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[600px]">
@@ -479,22 +509,11 @@ const handlePermanentDelete = async () => {
       {activeTab === 'deleted' && (
         <Card className="bg-card border-0">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-foreground">Deleted Registrants</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Manage and restore deleted records
-                </CardDescription>
-              </div>
-              {deletedRecords.length > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteAllModal(true)}
-                  className="border-red-700 bg-transparent hover:bg-red-900/20 text-red-400"
-                >
-                  <i className="fas fa-trash-alt mr-2"></i> Delete All ({deletedRecords.length})
-                </Button>
-              )}
+            <div>
+              <CardTitle className="text-foreground">Deleted Registrants</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Manage and restore deleted records
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -567,17 +586,6 @@ const handlePermanentDelete = async () => {
                                 className="h-8 border-green-700 bg-transparent hover:bg-green-900/20 text-green-400"
                               >
                                 <i className="fas fa-undo mr-1 text-xs"></i> Restore
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedRecord(record);
-                                  setShowDeleteModal(true);
-                                }}
-                                className="h-8 border-red-700 bg-transparent hover:bg-red-900/20 text-red-400"
-                              >
-                                <i className="fas fa-trash-alt mr-1 text-xs"></i> Delete
                               </Button>
                             </div>
                           </TableCell>
@@ -982,4 +990,3 @@ const handlePermanentDelete = async () => {
 };
 
 export default HistoryPage;
-
